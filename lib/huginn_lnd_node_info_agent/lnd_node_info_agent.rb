@@ -163,6 +163,7 @@ module Agents
 
       log "request  status : #{response.code}"
 
+      payload_ori = JSON.parse(response.body)
       payload = JSON.parse(response.body)
 
       if interpolated['changes_only'] == 'true'
@@ -173,35 +174,36 @@ module Agents
             last_status = memory['last_status'].gsub("=>", ": ").gsub(": nil", ": null")
             last_status = JSON.parse(last_status)
             found = false
-              if payload['num_active_channels'] != last_status['num_active_channels']
-                payload['num_active_channels_changed'] == true
-                found = true
-                log "number of active channels changed"
-              end
-              if payload['num_inactive_channels'] != last_status['num_inactive_channels']
-                payload['num_inactive_channels_changed'] == true
-                found = true
-                log "number of inactive channels changed"
-              end
-              if payload['version'] != last_status['version']
-                payload['version_changed'] == true
-                found = true
-                log "version changed"
-              end
-              if payload['identity_pubkey'] != last_status['identity_pubkey']
-                payload['identity_pubkey_changed'] == true
-                found = true
-              end
-            if found == false
+            if payload['num_active_channels'] != last_status['num_active_channels']
+              payload[:num_active_channels_changed] = true
+              found = true
+              log "number of active channels changed"
+            end
+            if payload['num_inactive_channels'] != last_status['num_inactive_channels']
+              payload[:num_inactive_channels_changed] = true
+              found = true
+              log "number of inactive channels changed"
+            end
+            if payload['version'] != last_status['version']
+              payload[:version_changed] = true
+              found = true
+              log "version changed"
+            end
+            if payload['identity_pubkey'] != last_status['identity_pubkey']
+              payload[:identity_pubkey_changed] = true
+              log "identity pubkey changed"
+              found = true
+            end
+            if found == true
                 create_event payload: payload
             end
-            memory['last_status'] = payload.to_s
           end
+          memory['last_status'] = payload_ori.to_s
         end
       else
         create_event payload: payload
         if payload.to_s != memory['last_status']
-          memory['last_status'] = payload.to_s
+          memory['last_status'] = payload_ori.to_s
         end
       end
     end
