@@ -27,71 +27,72 @@ module Agents
 
     event_description <<-MD
       Events look like this:
-      {
-          "version": {
-            "version": "0.11.0-beta commit=",
-            "commit_hash": "",
-            "identity_pubkey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-            "alias": "XXXXXXXXXXX",
-            "color": "XXXXXXX",
-            "num_pending_channels": 0,
-            "num_active_channels": 5,
-            "num_inactive_channels": 0,
-            "num_peers": 5,
-            "block_height": 644844,
-            "block_hash": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-            "best_header_timestamp": "1598100386",
-            "synced_to_chain": true,
-            "synced_to_graph": true,
-            "testnet": false,
-            "chains": [
-              {
-                "chain": "bitcoin",
-                "network": "mainnet"
-              }
-            ],
-            "uris": [
-              "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-            ],
-            "features": {
-              "0": {
-                "name": "data-loss-protect",
-                "is_required": true,
-                "is_known": true
-              },
-              "5": {
-                "name": "upfront-shutdown-script",
-                "is_required": false,
-                "is_known": true
-              },
-              "7": {
-                "name": "gossip-queries",
-                "is_required": false,
-                "is_known": true
-              },
-              "9": {
-                "name": "tlv-onion",
-                "is_required": false,
-                "is_known": true
-              },
-              "13": {
-                "name": "static-remote-key",
-                "is_required": false,
-                "is_known": true
-              },
-              "15": {
-                "name": "payment-addr",
-                "is_required": false,
-                "is_known": true
-              },
-              "17": {
-                "name": "multi-path-payments",
-                "is_required": false,
-                "is_known": true
+
+        {
+            "version": {
+              "version": "0.11.0-beta commit=",
+              "commit_hash": "",
+              "identity_pubkey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+              "alias": "XXXXXXXXXXX",
+              "color": "XXXXXXX",
+              "num_pending_channels": 0,
+              "num_active_channels": 5,
+              "num_inactive_channels": 0,
+              "num_peers": 5,
+              "block_height": 644844,
+              "block_hash": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+              "best_header_timestamp": "1598100386",
+              "synced_to_chain": true,
+              "synced_to_graph": true,
+              "testnet": false,
+              "chains": [
+                {
+                  "chain": "bitcoin",
+                  "network": "mainnet"
+                }
+              ],
+              "uris": [
+                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+              ],
+              "features": {
+                "0": {
+                  "name": "data-loss-protect",
+                  "is_required": true,
+                  "is_known": true
+                },
+                "5": {
+                  "name": "upfront-shutdown-script",
+                  "is_required": false,
+                  "is_known": true
+                },
+                "7": {
+                  "name": "gossip-queries",
+                  "is_required": false,
+                  "is_known": true
+                },
+                "9": {
+                  "name": "tlv-onion",
+                  "is_required": false,
+                  "is_known": true
+                },
+                "13": {
+                  "name": "static-remote-key",
+                  "is_required": false,
+                  "is_known": true
+                },
+                "15": {
+                  "name": "payment-addr",
+                  "is_required": false,
+                  "is_known": true
+                },
+                "17": {
+                  "name": "multi-path-payments",
+                  "is_required": false,
+                  "is_known": true
+                }
               }
             }
           }
-        }
     MD
 
     def default_options
