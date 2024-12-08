@@ -15,6 +15,8 @@ module Agents
 
       `real_value` is used for calculating token value with the tokenDecimal applied.
 
+      `debug` is used for verbose mode.
+
       `with_confirmations` is used to avoid an event as soon as it increases.
 
       `type` can be tokentx type (you can see api documentation).
@@ -100,6 +102,7 @@ module Agents
         'url' => '',
         'changes_only' => 'true',
         'expected_receive_period_in_days' => '2',
+        'debug' => 'false',
         'macaroon' => '',
       }
     end
@@ -107,6 +110,7 @@ module Agents
     form_configurable :url, type: :string
     form_configurable :changes_only, type: :boolean
     form_configurable :macaroon, type: :string
+    form_configurable :debug, type: :boolean
     form_configurable :expected_receive_period_in_days, type: :string
 
     def validate_options
@@ -116,6 +120,10 @@ module Agents
 
       if options.has_key?('changes_only') && boolify(options['changes_only']).nil?
         errors.add(:base, "if provided, changes_only must be true or false")
+      end
+
+      if options.has_key?('debug') && boolify(options['debug']).nil?
+        errors.add(:base, "if provided, debug must be true or false")
       end
 
       unless options['macaroon'].present?
@@ -137,6 +145,18 @@ module Agents
 
     private
 
+    def log_curl_output(code,body)
+
+      log "request status : #{code}"
+
+      if interpolated['debug'] == 'true'
+        log "request status : #{code}"
+        log "body"
+        log body
+      end
+
+    end
+
     def fetch
       uri = URI.parse("#{interpolated['url']}/v1/getinfo")
       request = Net::HTTP::Get.new(uri)
@@ -151,49 +171,58 @@ module Agents
         http.request(request)
       end
 
-      log "request  status : #{response.code}"
+      log_curl_output(response.code,response.body)
 
       payload_ori = JSON.parse(response.body)
-      payload = JSON.parse(response.body)
+      payload = payload_ori.dup
 
       if interpolated['changes_only'] == 'true'
-        if payload.to_s != memory['last_status']
+        if payload != memory['last_status']
           if "#{memory['last_status']}" == ''
               create_event payload: payload
           else
-            last_status = memory['last_status'].gsub("=>", ": ").gsub(": nil", ": null")
-            last_status = JSON.parse(last_status)
+            last_status = memory['last_status']
             found = false
             if payload['num_active_channels'] != last_status['num_active_channels']
               payload[:num_active_channels_changed] = true
               found = true
-              log "number of active channels changed"
+              if interpolated['debug'] == 'true'
+                log "number of active channels changed"
+              end
             end
             if payload['num_inactive_channels'] != last_status['num_inactive_channels']
               payload[:num_inactive_channels_changed] = true
               found = true
-              log "number of inactive channels changed"
+              if interpolated['debug'] == 'true'
+                log "number of inactive channels changed"
+              end
             end
             if payload['version'] != last_status['version']
               payload[:version_changed] = true
               found = true
-              log "version changed"
+              if interpolated['debug'] == 'true'
+                log "version changed"
+              end
             end
             if payload['identity_pubkey'] != last_status['identity_pubkey']
               payload[:identity_pubkey_changed] = true
-              log "identity pubkey changed"
+              if interpolated['debug'] == 'true'
+                log "identity pubkey changed"
+              end
               found = true
             end
             if found == true
                 create_event payload: payload
             end
           end
-          memory['last_status'] = payload_ori.to_s
+          memory['last_status'] = payload_ori
+        else
+          log "no diff"
         end
       else
         create_event payload: payload
-        if payload.to_s != memory['last_status']
-          memory['last_status'] = payload_ori.to_s
+        if payload != memory['last_status']
+          memory['last_status'] = payload_ori
         end
       end
     end
